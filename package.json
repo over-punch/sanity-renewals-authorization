@@ -31,12 +31,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/quitequinn/sanity-renewals-authorization.git"
+    "url": "https://github.com/Liiift-Studio/sanity-renewals-authorization.git"
   },
   "bugs": {
-    "url": "https://github.com/quitequinn/sanity-renewals-authorization/issues"
+    "url": "https://github.com/Liiift-Studio/sanity-renewals-authorization/issues"
   },
-  "homepage": "https://github.com/quitequinn/sanity-renewals-authorization#readme",
+  "homepage": "https://github.com/Liiift-Studio/sanity-renewals-authorization#readme",
   "peerDependencies": {
     "react": "^18.0.0",
     "sanity": "^3.0.0",
