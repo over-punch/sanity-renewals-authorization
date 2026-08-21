@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, Text, Button, Flex, Stack, TextInput, Badge, Spinner, Select } from '@sanity/ui';
+import { Box, Card, Text, Button, Flex, Stack, TextInput, Badge, Spinner, Select } from '@liiift-studio/sanity-ui-compat';
 import { useClient } from 'sanity';
 
 interface RenewalsAuthorizationProps {
