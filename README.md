@@ -1,17 +1,19 @@
 # Sanity Renewals Authorization
 
 A renewal-order management tool for subscription / licensing businesses running on
-**Sanity Studio v3**. It adds a **Renewals** tab to the Studio where an editor can
+**Sanity Studio v3 through v6**. It adds a **Renewals** tab to the Studio where an editor can
 assemble a renewal order from an existing cart or a past order — set an effective
 date, record the superseded document, add line items, and write a new `order`
 document with `orderType: 'renewal'`.
 
 > **Status:** Internal package in the Liiift Sanity-tools monorepo. **Not published
-> to npm** — install from source (see [Installation](#installation)). Version `1.0.0`.
+> to npm** — the name `sanity-renewals-authorization` is unscoped and unclaimed on the
+> registry, so `npm install sanity-renewals-authorization` returns a 404. Consume it by
+> path or workspace instead (see [Installation](#installation)). Version `1.0.0`.
 > Some advertised features are scaffolded but not yet implemented — see
 > [Implementation status](#implementation-status).
 
-![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Sanity Studio v3](https://img.shields.io/badge/Sanity-Studio%20v3-f03e2f) ![status: internal](https://img.shields.io/badge/status-internal%20%C2%B7%20unpublished-lightgrey)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Sanity Studio v3–v6](https://img.shields.io/badge/Sanity%20Studio-v3%20%C2%B7%20v4%20%C2%B7%20v5%20%C2%B7%20v6-f03e2f) ![status: internal](https://img.shields.io/badge/status-internal%20%C2%B7%20unpublished-lightgrey)
 
 ---
 
@@ -71,24 +73,48 @@ partial items before relying on them.
 
 ## Installation
 
-This package is **not on npm**. Consume it from source. Inside the monorepo it is
-already present at `tools/sanity-tools/sanity-renewals-authorization`; from another
-project install it from the Git repository or a local path:
+This package is **internal and unpublished**. There is no registry entry — `npm install
+sanity-renewals-authorization` will 404, and the name is unscoped, so it is not hiding
+under `@liiift-studio/` either. Consume it from source by one of these routes.
+
+**1. Local path (most common).** Inside the monorepo the package already sits at
+`tools/sanity-tools/sanity-renewals-authorization`. From a Studio elsewhere on the same
+machine, point at the checkout — npm creates a symlink, so edits are picked up
+immediately:
 
 ```bash
-# From the Git repository
-npm install github:Liiift-Studio/sanity-renewals-authorization
-
-# Or from a local checkout
-npm install /path/to/sanity-renewals-authorization
+npm install file:../../tools/sanity-tools/sanity-renewals-authorization
 ```
 
-Peer dependencies (must already be present in the host Studio):
+**2. npm workspace.** If the consuming Studio and this package live in the same npm
+workspace tree, declare it and let the workspace resolver link it:
 
 ```jsonc
-"react":      "^18.0.0",
-"sanity":     "^3.0.0",
-"@sanity/ui": "^1.0.0"
+// package.json of the consuming Studio
+"dependencies": {
+  "sanity-renewals-authorization": "*"
+}
+```
+
+**3. Git URL.** Works only if you have read access to the private repository:
+
+```bash
+npm install github:Liiift-Studio/sanity-renewals-authorization
+```
+
+Either way the import specifier stays `sanity-renewals-authorization`, matching the
+`name` in `package.json`.
+
+> `prepare` runs `rollup -c`, so `dist/` is built when the package is installed or linked.
+> The `groq` package is a direct dependency and comes along automatically.
+
+Peer dependencies (must already be present in the host Studio) — see
+[Studio compatibility](#studio-compatibility) for why these ranges are what they are:
+
+```jsonc
+"react":      "^18.0.0 || ^19.0.0",
+"sanity":     ">=3 <7",
+"@sanity/ui": ">=2 <5"
 ```
 
 ---
@@ -305,10 +331,49 @@ document; `totals.subtotal` seeds the pricing calculation.
 
 ## Requirements
 
-- Sanity Studio v3+
-- React 18+
-- `@sanity/ui` v1+
+- Sanity Studio v3, v4, v5 or v6 (`sanity` peer `>=3 <7`)
+- React 18 or 19
+- `@sanity/ui` v2, v3 or v4 (peer `>=2 <5`)
 - Node.js 16+
+
+---
+
+## Studio compatibility
+
+| Peer | Range | Notes |
+|---|---|---|
+| `sanity` | `>=3 <7` | Studio v3, v4, v5 and v6 |
+| `@sanity/ui` | `>=2 <5` | **Not a typo** — Studio v6 ships `@sanity/ui` **v4**, not v5 |
+| `react` | `^18 \|\| ^19` | |
+
+A single build spans four consecutive Studio majors. The ranges look wrong at a glance,
+so here is the mechanism.
+
+`@sanity/ui` v4 moved `Tooltip`, `Menu`, `MenuButton`, `MenuItem`, `Code`, `Popover`,
+`Autocomplete`, `Toast` and `useToast` out of the package root into subpath entries, and
+`@sanity/icons` v5 removed every named `*Icon` export.
+
+The trap: **both packages still *declare* the removed names in their `.d.ts`, typed
+`never`.** A named import therefore type-checks, compiles green, and only then fails at
+runtime as an undefined component — `npm run type-check` cannot catch it, so a passing
+build is not evidence that the UI renders.
+
+This tool therefore imports **no `@sanity/ui` symbol directly**. Every primitive routes
+through [`@liiift-studio/sanity-ui-compat`](https://www.npmjs.com/package/@liiift-studio/sanity-ui-compat),
+a direct dependency that resolves whichever namespace is actually installed at runtime:
+
+```ts
+// src/RenewalsAuthorizationComponent.tsx
+import { Box, Card, Text, Button, Flex, Stack, TextInput, Badge, Spinner, Select } from '@liiift-studio/sanity-ui-compat';
+```
+
+Because the `@sanity/ui` peer excludes v5, and Studio v6 ships v4, that upper bound is
+correct rather than stale.
+
+> **Verification status.** v3–v6 support rests on the declared peer ranges and a green
+> build. This package has **not** been exercised in a running Sanity 6 Studio — and note
+> that `npm test` has no test files to run (see [Development](#development)). Treat v6 as
+> declared-compatible rather than proven.
 
 ---
 
