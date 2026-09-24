@@ -99,7 +99,7 @@ workspace tree, declare it and let the workspace resolver link it:
 **3. Git URL.** Works only if you have read access to the private repository:
 
 ```bash
-npm install github:Liiift-Studio/sanity-renewals-authorization
+npm install github:over-punch/sanity-renewals-authorization
 ```
 
 Either way the import specifier stays `sanity-renewals-authorization`, matching the
@@ -447,7 +447,7 @@ tool in the monorepo's `/test-studio`.
 
 Contributions are welcome. Because this package is consumed by other Studios in the
 monorepo, coordinate breaking changes to the exports. Open an issue or a pull request
-on the [GitHub repository](https://github.com/Liiift-Studio/sanity-renewals-authorization).
+on the [GitHub repository](https://github.com/over-punch/sanity-renewals-authorization).
 
 ---
 
