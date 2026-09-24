@@ -75,7 +75,7 @@ partial items before relying on them.
 
 This package is **internal and unpublished**. There is no registry entry — `npm install
 sanity-renewals-authorization` will 404, and the name is unscoped, so it is not hiding
-under `@liiift-studio/` either. Consume it from source by one of these routes.
+under `@overpunch/` either. Consume it from source by one of these routes.
 
 **1. Local path (most common).** Inside the monorepo the package already sits at
 `tools/sanity-tools/sanity-renewals-authorization`. From a Studio elsewhere on the same
@@ -359,12 +359,12 @@ runtime as an undefined component — `npm run type-check` cannot catch it, so a
 build is not evidence that the UI renders.
 
 This tool therefore imports **no `@sanity/ui` symbol directly**. Every primitive routes
-through [`@liiift-studio/sanity-ui-compat`](https://www.npmjs.com/package/@liiift-studio/sanity-ui-compat),
+through [`@overpunch/sanity-ui-compat`](https://www.npmjs.com/package/@overpunch/sanity-ui-compat),
 a direct dependency that resolves whichever namespace is actually installed at runtime:
 
 ```ts
 // src/RenewalsAuthorizationComponent.tsx
-import { Box, Card, Text, Button, Flex, Stack, TextInput, Badge, Spinner, Select } from '@liiift-studio/sanity-ui-compat';
+import { Box, Card, Text, Button, Flex, Stack, TextInput, Badge, Spinner, Select } from '@overpunch/sanity-ui-compat';
 ```
 
 Because the `@sanity/ui` peer excludes v5, and Studio v6 ships v4, that upper bound is
